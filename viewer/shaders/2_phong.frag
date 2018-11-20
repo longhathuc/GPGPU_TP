@@ -17,6 +17,7 @@ out vec4 fragColor;
 const float PI = 3.1415926535897932384626433832795;
 
 // Schlick approximation
+// using cosTheta directly to prevent inverse function
 float fresnel(float eta, float cosTheta)
 {
     float F0 = pow((1.0-eta),2.0) / pow((1.0+eta),2.0);
@@ -24,6 +25,7 @@ float fresnel(float eta, float cosTheta)
     return F0 + (1.0 - F0)*pow(minusCosTheta,5.0);
 }
 
+//Fresn formular from TP page
 float fresnel2(float eta, float cosTheta)
 {
     float Ci = sqrt(pow(eta,2.0)-(1-pow(cosTheta,2.0)));
@@ -85,9 +87,11 @@ void main( void )
 {
      // This is the place where there's work to be done
      float ka = 0.2,
-           kd = 0.24,
+           kd = 0.25,
            ks = 0.3;
+
      float cosTheta = 0.0;
+
      vec4 lightVectorNormal = normalize(lightVector),
           eyeVectorNormal   = normalize(eyeVector),
           vertNormalNormal  = normalize(vertNormal);
@@ -108,28 +112,26 @@ void main( void )
         specularLighting  = vertColor * pow(max(dot(vertNormalNormal, H), 0.0), shininess) * lightIntensity;
      }
      else{
-         float alpha        = 0.4; //roughness
+         float alpha        = 0.2; //roughness
          float alphaSquare  = pow(alpha,2.0);
          float cosThetaIn   = dot(H, lightVectorNormal);
          float cosThetaOut  = dot(H, eyeVectorNormal);
-         float cosThetaH    = dot(H, vertNormalN2ormal);
-         float tanInSquare  = (1.0-pow(cosThetaIn,2.0))/pow(cosThetaIn,2.0);
-         float tanOutSquare = (1.0-pow(cosThetaOut,2.0))/pow(cosThetaOut,2.0);
-         float tanHSquare   = (1.0-pow(cosThetaH,2.0))/pow(cosThetaH,2.0);
-         float gIn          = 2.0 / (1.0 + sqrt(1.0 + alphaSquare + tanInSquare));
-         float gOut         = 2.0 / (1.0 + sqrt(1.0 + alphaSquare + tanOutSquare));
+         float cosThetaH    = dot(H, vertNormalNormal);
+         float tanInSquare  = (1.0-pow(cosThetaIn,2.0))  / pow(cosThetaIn,2.0);
+         float tanOutSquare = (1.0-pow(cosThetaOut,2.0)) / pow(cosThetaOut,2.0);
+         float tanHSquare   = (1.0-pow(cosThetaH,2.0))   / pow(cosThetaH,2.0);
+
+         //formula fix from https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf
+         float gIn          = 2.0 / (1.0 + sqrt(1.0 + alphaSquare * tanInSquare));
+         float gOut         = 2.0 / (1.0 + sqrt(1.0 + alphaSquare * tanOutSquare));
 
          float microfacetNormalDistribution = (indicatorX(cosThetaH)/(PI*pow(cosThetaH,4.0))) * (alphaSquare/(pow(alphaSquare + tanHSquare,2.0)));
 
          specularLighting = vertColor * ((microfacetNormalDistribution * gIn * gOut)/ (4.0*cosThetaIn*cosThetaOut))  * lightIntensity;
-
-
      }
 
-     //cosTheta = dot(H, eyeVectorNormal);;
+     cosTheta = dot(H, eyeVectorNormal);;
      specularLighting *= fresnel2(eta, cosTheta);
-
-
      fragColor = ambientLighting + diffuseLighting + specularLighting;
 
 }
