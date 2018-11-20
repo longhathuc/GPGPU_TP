@@ -34,7 +34,7 @@ float fresnel2(float eta, float cosTheta)
     return 0.5*(Fs+Fp);
 }
 
-
+//Indicator Function
 float indicatorX(float cosTheta)
 {
     if (cosTheta >= 0 && cosTheta <= 1)
@@ -51,6 +51,7 @@ void main( void )
 
      float cosTheta = 0.0;
 
+     //Normalize the vectors
      vec4 lightVectorNormal = normalize(lightVector),
           eyeVectorNormal   = normalize(eyeVector),
           vertNormalNormal  = normalize(vertNormal);
@@ -65,7 +66,10 @@ void main( void )
 
      //Specular lighting:
      vec4  specularLighting;
+
+     // Hvector
      vec4  H              = normalize(lightVectorNormal + eyeVectorNormal);
+
 
      if (blinnPhong) {
         specularLighting  = vertColor * pow(max(dot(vertNormalNormal, H), 0.0), shininess) * lightIntensity;
@@ -89,8 +93,12 @@ void main( void )
          specularLighting = vertColor * ((microfacetNormalDistribution * gIn * gOut)/ (4.0*cosThetaIn*cosThetaOut))  * lightIntensity;
      }
 
-     cosTheta = dot(H, eyeVectorNormal);;
+     cosTheta = dot(H, eyeVectorNormal);
+
      specularLighting *= fresnel2(eta, cosTheta);
+
      fragColor = ambientLighting + diffuseLighting + specularLighting;
 
 }
+
+
