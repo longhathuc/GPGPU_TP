@@ -43,52 +43,11 @@ float indicatorX(float cosTheta)
 }
 
 
-//Metal Fresnel
-float n_min(float r){
-    return (1-r)/(1+r);
-}
-float n_max(float r){
-    return (1+sqrt(r))/(1-sqrt(r));
-}
-float get_n(float r,float g){
-    return n_min(r)*g + (1-g)*n_max(r);
-}
-float get_k2(float r, float n){
-    float nr = (n+1)*(n+1)*r-(n-1)*(n-1);
-    return nr/(1-r);
-}
-float get_r(float n, float k){
-    return ((n-1)*(n-1)+k*k)/((n+1)*(n+1)+k*k);
-}
-float get_g(float n, float k){
-    float r = get_r(n,k);
-    return (n_max(r)-n)/(n_max(r)-n_min(r));
-}
-float metalicFresnel(float r, float g,float cosTheta){
-    //clamp parameters
-    float _r = clamp(r,0,0.99);
-    //compute n and k
-    float n = get_n(_r,g);
-    float k2 = get_k2(_r,n);
-
-    float c = cosTheta;
-    float rs_num = n*n + k2 - 2*n*c + c*c;
-    float rs_den = n*n + k2 + 2*n*c + c*c;
-    float rs = rs_num/rs_den;
-
-    float rp_num = (n*n + k2)*c*c - 2*n*c + 1;
-    float rp_den = (n*n + k2)*c*c + 2*n*c + 1;
-    float rp = rp_num/rp_den;
-
-    return 0.5*(rs+rp);
-}
-
 void main( void )
 {
      // This is the place where there's work to be done
      float ka = 0.2,
-           kd = 0.25,
-           ks = 0.3;
+           kd = 0.25;
 
      float cosTheta = 0.0;
 
