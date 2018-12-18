@@ -30,13 +30,13 @@ void main( void )
     vec4 vertPos = matrix * vertex;
 
     eyeVector    = normalize(eyePos - vertPos);
-    vec4 ligthPosition4 = vec4(lightPosition,1.0);
+    vec4 ligthPosition4 = matrix * vec4(lightPosition,1.0);
     lightVector  = normalize(ligthPosition4 - vertPos);
 
     mat4 normalMatrix4 = mat4(normalMatrix);
     vertNormal   = normalize(normalMatrix4 * normal);
     // end TODO
    // gl_Position = perspective * matrix * vertex;
-   gl_Position = perspective * vertPos;
+    gl_Position = perspective * vertPos;
 
 }
