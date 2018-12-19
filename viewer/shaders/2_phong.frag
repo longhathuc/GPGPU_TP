@@ -35,12 +35,7 @@ float fresnel2(float eta, float cosTheta)
 }
 
 //Indicator Function
-float indicatorX(float cosTheta)
-{
-    if (cosTheta >= 0 && cosTheta <= 1)
-        return 1.0;
-    else return 0.0;
-}
+float indicatorX(float cosTheta);
 
 
 void main( void )
@@ -75,10 +70,10 @@ void main( void )
         specularLighting  = vertColor * pow(max(dot(vertNormalNormal, H), 0.0), shininess) * lightIntensity;
      }
      else{
-         float alpha        = 0.2; //roughness
+         float alpha        = 1 / shininess;
          float alphaSquare  = pow(alpha,2.0);
-         float cosThetaIn   = dot(H, lightVectorNormal);
-         float cosThetaOut  = dot(H, eyeVectorNormal);
+         float cosThetaIn   = dot(vertNormalNormal, lightVectorNormal);
+         float cosThetaOut  = dot(vertNormalNormal, eyeVectorNormal);
          float cosThetaH    = dot(H, vertNormalNormal);
          float tanInSquare  = (1.0-pow(cosThetaIn,2.0))  / pow(cosThetaIn,2.0);
          float tanOutSquare = (1.0-pow(cosThetaOut,2.0)) / pow(cosThetaOut,2.0);
@@ -101,4 +96,9 @@ void main( void )
 
 }
 
-
+float indicatorX(float cosTheta)
+{
+    if (cosTheta >= 0 && cosTheta <= 1)
+        return 1.0;
+    else return 0.0;
+}

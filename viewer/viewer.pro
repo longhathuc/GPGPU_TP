@@ -33,7 +33,6 @@ OTHER_FILES +=  \
     shaders/7_noiseAlone.frag \
     shaders/7_noiseAlone.vert \
     shaders/8_gpgpu_spherert.vert \
-    shaders/8_gpgpu_spherert.frag \
     shaders/h_shadowMapGeneration.frag \
     shaders/h_shadowMapGeneration.vert \
     shaders/gpgpu_fullrt.frag \
@@ -45,4 +44,7 @@ OTHER_FILES +=  \
 # Reference/source: http://gfx.cs.princeton.edu/proj/trimesh2/
 INCLUDEPATH += ../trimesh2/include/
 LIBS += -L../../GPGPU_TP/trimesh2/lib -ltrimesh
+
+DISTFILES += \
+    shaders/8_gpgpu_spherert.frag
 

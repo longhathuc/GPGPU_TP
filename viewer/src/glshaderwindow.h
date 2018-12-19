@@ -45,6 +45,7 @@ public slots:
     void blinnPhongClicked();
     void transparentClicked();
     void opaqueClicked();
+    void bubbleClicked();
     void updateLightIntensity(int lightSliderValue);
     void updateShininess(int shininessSliderValue);
     void updateEta(int etaSliderValue);
@@ -101,6 +102,7 @@ private:
     // Parameters controlled by UI
     bool blinnPhong;
     bool transparent;
+    bool bubble;
     float eta;
     float lightIntensity;
     float shininess;
