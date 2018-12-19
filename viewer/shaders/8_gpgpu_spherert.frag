@@ -104,13 +104,13 @@ bool raySphereIntersect(in vec3 start, in vec3 direction, out vec3 newPoint, flo
 
     if (delta > 0){
         float q = (b < 0) ?
-             (-b - sqrt(delta))/2.0:
-             (-b + sqrt(delta))/2.0;
+                    (-b - sqrt(delta))/2.0:
+                    (-b + sqrt(delta))/2.0;
 
         float t0 = q /a;
         float t1 = c /q;
 
-        // t0 must be smaller than t1. otherwise, swap
+        // t0 should be smaller than t1. otherwise, swap the two
         if (t0 > t1) {
             float t;
             t = t0;
@@ -134,15 +134,15 @@ bool raySphereIntersect(in vec3 start, in vec3 direction, out vec3 newPoint, flo
 
 void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
 {
-    int location = 2; //1 = env, 2 = glass, 3 = inner air;
+    int nextLocation = 2; //1 = env, 2 = glass, 3 = inner air;
     vec3 intersect_point;
 
     if(raySphereIntersect(eye, u, intersect_point,radius)){
 
         vec3 vertNormal = normalize(intersect_point - center);
-        for(int i = 1; i <numberOfBouncing; i++ )
+        for(int i = 1; i <numberOfBouncing; i++)
         {
-            lightColour[i] = vec4(0,0,0,0);
+            lightColour[i]  = vec4(0,0,0,0);
             lightFresnel[i] = 0;
         }
         vec3 normal;
@@ -151,10 +151,10 @@ void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
         vec3 intersectPointInnerBubble;
         vec3 intersectPointOuter;
 
-        lightFresnel[0] = fresnel(vertNormal, u ,eta);
-        lightNormal[0] =  vertNormal;
-        lightDirection[0] = normalize(reflect(u, vertNormal));
-        lightColour[0] = getColorFromEnvironment(lightDirection[0]);
+        lightFresnel[0]     = fresnel(vertNormal, u ,eta);
+        lightNormal[0]      =  vertNormal;
+        lightDirection[0]   = normalize(reflect(u, vertNormal));
+        lightColour[0]      = getColorFromEnvironment(lightDirection[0]);
 
         direction = normalize(refract(u, vertNormal, 1/eta));
 
@@ -163,7 +163,7 @@ void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
 
         for(int i = 1; i < numberOfBouncing; i++) {
             normal  = normalize(intersect_point - center);
-            if ((dot(direction,normal)<0) && (location == 2))
+            if ((dot(direction,normal)<0) && (nextLocation == 2))
             {
                 //normal and direction vector in reverse direction
                 //outer glass, now reflect
@@ -171,18 +171,19 @@ void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
                 normal  = normalize(intersectPointInnerBubble - center);
                 lightDirection[i+1] = normalize(reflect(direction, normal));
                 lightFresnel[i+1]   = fresnel(normal, direction ,eta);
-                lightColour[i+1] = getColorFromEnvironment(lightDirection[i+1]);
+                lightColour[i+1]    = getColorFromEnvironment(lightDirection[i+1]);
 
                 //refract to inner
-                lightFresnel[i] = 1- lightFresnel[i+1] ;
-                lightDirection[i] = normalize(refract(direction, normal, eta));
-                lightColour[i] = getColorFromEnvironment(lightDirection[i]);
+                lightFresnel[i]     = 1- lightFresnel[i+1] ;
+                lightDirection[i]   = normalize(refract(direction, normal, eta));
+                lightColour[i]      = getColorFromEnvironment(lightDirection[i]);
 
+                //follow the refraction
                 direction = lightDirection[i];
                 intersect_point = intersectPointInnerBubble;
-                location = 3;
+                nextLocation = 3;
             }
-            else if (location == 3){
+            else if (nextLocation == 3){
                 //inner air
                 raySphereIntersect(intersect_point+direction*0.001, direction, intersectPointInnerBubble,radiusInner);
 
@@ -196,11 +197,12 @@ void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
                 lightDirection[i]   = normalize(refract(direction, normal, 1/eta));
                 lightColour[i]      = getColorFromEnvironment(lightDirection[i]);
 
-                direction       = lightDirection[i];
-                intersect_point = intersectPointInnerBubble;
-                location        = 2;
+                //follow the refraction
+                direction           = lightDirection[i];
+                intersect_point     = intersectPointInnerBubble;
+                nextLocation        = 2;
             }
-            else if ((dot(direction,normal)>0) && (location == 2))
+            else if ((dot(direction,normal)>0) && (nextLocation == 2))
             {
                 //outer glass, now reflect
                 raySphereIntersect(intersect_point + direction*0.001, direction, intersectPointOuter,radius);
@@ -210,13 +212,14 @@ void bubbleTracing(in vec3 eye, in vec3 u, out vec4 colour)
                 lightColour[i+1]    = getColorFromEnvironment(lightDirection[i+1]);
 
                 //refract to outside air
-                lightFresnel[i]   = 1- lightFresnel[i+1] ;
+                lightFresnel[i]   = 1 - lightFresnel[i+1] ;
                 lightDirection[i] = normalize(refract(direction, normal, eta));
                 lightColour[i]    = getColorFromEnvironment(lightDirection[i]);
 
+                //follow the reflect ray
                 direction         = lightDirection[i+1];
                 intersect_point   = intersectPointOuter;
-                location          = 1;
+                nextLocation      = 2;
             }
         }
         for (int i= numberOfBouncing -1; i > 0; i--)
@@ -279,6 +282,8 @@ void sphereTracing(in vec3 eye, in vec3 u, out vec4 colour)
                 lightDirection[i] = normalize(refract(direction, normal, eta));
                 lightColour[i]    = getColorFromEnvironment(lightDirection[i]);
 
+
+                //follow the reflection
                 direction         = lightDirection[i+1];
                 intersect_point   = intersect_point2;
             }
@@ -291,4 +296,3 @@ void sphereTracing(in vec3 eye, in vec3 u, out vec4 colour)
             colour =  getColorFromEnvironment(u) ;
     }
 }
-
