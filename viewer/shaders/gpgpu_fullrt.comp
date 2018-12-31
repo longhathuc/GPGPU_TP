@@ -16,7 +16,7 @@ uniform float groundDistance;
 uniform vec3 center;
 uniform bool blinnPhong;
 
-#define MAX_SCENE_BOUNDS    20
+#define MAX_SCENE_BOUNDS    10
 #define EPS                 0.0001
 
 const int MAX_TRACE = 20;
@@ -278,8 +278,8 @@ vec4 trace(vec4 origin, vec4 dir)
     int  iBounds  = 0;
     float fresnel = 1.0;
 
-    vec4 newOrigin    = vec4(origin.xyzw),
-         newDirection = vec4(dir.xyzw),
+    vec4 newOrigin    = origin,
+         newDirection = dir,
          ret          = vec4(0,0,0,1);
 
     // forward Tracing
@@ -312,10 +312,10 @@ vec4 trace(vec4 origin, vec4 dir)
 
 layout (local_size_x = 8, local_size_y = 8) in;
 void main(void) {
-    ivec2 pix = ivec2(gl_GlobalInvocationID.xy); // interger vector
-    ivec2 size = imageSize(framebuffer); // ret of compute shader stored in framebuffer
+    ivec2 pix = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(framebuffer);
     if (pix.x >= size.x || pix.y >= size.y) {
-        return; // if pixel we are working on is beyond the size of image size then return
+        return;
     }
     vec2 pos = pix / (size - vec2(0.5,0.5));
     // pos in [0,1]^2 Need it in [-1,1]^2:
@@ -334,3 +334,4 @@ void main(void) {
 
     imageStore(framebuffer, pix, color);
 }
+
