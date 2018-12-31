@@ -1,4 +1,4 @@
-DESTDIR = ../../GPGPU_TP/trimesh2/lib
+DESTDIR = ../trimesh2/lib
 
 win32 {
     TEMPLATE = vclib

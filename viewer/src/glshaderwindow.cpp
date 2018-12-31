@@ -18,6 +18,7 @@
 #include <assert.h>
 
 #include "perlinNoise.h" // defines tables for Perlin Noise
+#include "glshaderwindow.h"
 
 glShaderWindow::glShaderWindow(QWindow *parent)
 // Initialize obvious default values here (e.g. 0 for pointers)
@@ -27,7 +28,7 @@ glShaderWindow::glShaderWindow(QWindow *parent)
       gpgpu_vertices(0), gpgpu_normals(0), gpgpu_texcoords(0), gpgpu_colors(0), gpgpu_indices(0),
       environmentMap(0), texture(0), permTexture(0), pixels(0), mouseButton(Qt::NoButton), auxWidget(0),
       isGPGPU(false), hasComputeShaders(false), blinnPhong(true), transparent(true), eta(1.50), lightIntensity(1.0f), shininess(50.0f), lightDistance(5.0f), groundDistance(0.78),
-      shadowMap_fboId(0), shadowMap_rboId(0), shadowMap_textureId(0), fullScreenSnapshots(false), computeResult(0), 
+      shadowMap_fboId(0), shadowMap_rboId(0), shadowMap_textureId(0), fullScreenSnapshots(false), computeResult(0),
       m_indexBuffer(QOpenGLBuffer::IndexBuffer), ground_indexBuffer(QOpenGLBuffer::IndexBuffer)
 {
     // Default values you might want to tinker with
@@ -326,7 +327,7 @@ QWidget *glShaderWindow::makeAuxWindow()
 
 void glShaderWindow::createSSBO() 
 {
-#ifndef __APPLE__
+//#ifndef __APPLE__
 	glGenBuffers(4, ssbo);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo[0]);
     // TODO: test if 4 float alignment works better
@@ -343,7 +344,7 @@ void glShaderWindow::createSSBO()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ssbo[1]);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ssbo[2]);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, ssbo[3]);
-#endif
+//#endif
 }
 
 void glShaderWindow::bindSceneToProgram()

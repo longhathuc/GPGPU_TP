@@ -87,13 +87,13 @@ void setupWindowMenu(QMenuBar* myMenuBar, glShaderWindow* glWindow)
     glWindow->connect(&sizeMapper, SIGNAL(mapped(const QString&)), glWindow, SLOT(setWindowSize(const QString&)));
 }
 
-void setupShaderMenu(QMenuBar* myMenuBar, glShaderWindow* glWindow) 
+void setupShaderMenu(QMenuBar* myMenuBar, glShaderWindow* glWindow)
 {
     // list of all shaders
     QMenu* shaderMenu = myMenuBar->addMenu(myMenuBar->tr("&Shaders"));
     // Take all shaders by listing shader directory:
-	QString shaderPath = glWindow->getWorkingDirectory();
-	shaderPath = shaderPath + "../shaders/";
+    QString shaderPath = glWindow->getWorkingDirectory();
+    shaderPath = shaderPath + "../shaders/";
     QDir shadersDir = QDir(shaderPath);
     // Oldest shaders first
     QStringList fragShaders = shadersDir.entryList(glWindow->fragShaderSuffix(), QDir::Files|QDir::Readable, QDir::Name);
@@ -123,7 +123,7 @@ int main( int argc, char* argv[] )
 {
     setlocale(LC_ALL,"C");
     QApplication app(argc, argv);
-    QString sceneName = "lemming.ply";
+    QString sceneName = "teapot.ply";
     QString textureName = "wildtextures-seamless-wood-planks.jpg";
     QString envMapName = "pisa.png";
 
@@ -139,12 +139,14 @@ int main( int argc, char* argv[] )
 
     // Specify an OpenGL 4.4 format using the Core profile.
     // That is, no old-school fixed pipeline functionality
-    // Specify an OpenGL 4.1 format using the Core profile.
-    // That is, no old-school fixed pipeline functionality
     QSurfaceFormat format;
     format.setSamples(16); // for anti-aliasing
     format.setDepthBufferSize(24);
+#ifndef __APPLE__
+    format.setVersion(4,4);
+#else
     format.setVersion(4,1);
+#endif
     format.setProfile(QSurfaceFormat::CoreProfile);
 
     // Create GL shader window and add it to application

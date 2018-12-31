@@ -1,6 +1,6 @@
 #ifndef PERLINNOISE_H
 #define PERLINNOISE_H
-
+#include "glshaderwindow.h"
 // For Perlin/Simplex noise:
 // From Stefan Gustavson,
 // http://staffwww.itn.liu.se/~stegu/simplexnoise/DSOnoises.html

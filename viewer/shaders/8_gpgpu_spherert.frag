@@ -56,9 +56,9 @@ void main(void)
     vec4 colour = vec4(0,0,0,1);
 
     if (bubble)
-        colour = bubbleTracing(eye,u,colour);
+        bubbleTracing(eye,u,colour);
     else
-        colour = sphereTracing(eye,u,colour);
+        sphereTracing(eye,u,colour);
 
     fragColor = colour;
 }

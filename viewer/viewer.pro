@@ -1,5 +1,5 @@
 
-DESTDIR = ../../GPGPU_TP/viewer
+DESTDIR = ../viewer
 QT       += core gui opengl
 
 TARGET = myViewer
@@ -33,18 +33,17 @@ OTHER_FILES +=  \
     shaders/7_noiseAlone.frag \
     shaders/7_noiseAlone.vert \
     shaders/8_gpgpu_spherert.vert \
+    shaders/8_gpgpu_spherert.frag \
     shaders/h_shadowMapGeneration.frag \
     shaders/h_shadowMapGeneration.vert \
     shaders/gpgpu_fullrt.frag \
-    shaders/gpgpu_fullrt.vert
-
+    shaders/gpgpu_fullrt.vert \
+    shaders/gpgpu_fullrt.comp
 
 
 # trimesh library for loading objects.
 # Reference/source: http://gfx.cs.princeton.edu/proj/trimesh2/
 INCLUDEPATH += ../trimesh2/include/
-LIBS += -L../../GPGPU_TP/trimesh2/lib -ltrimesh
+LIBS += -L../trimesh2/lib -ltrimesh
 
-DISTFILES += \
-    shaders/8_gpgpu_spherert.frag
 
